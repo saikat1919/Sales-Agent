@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     DB_NAME: str = "sales_agent"
     DB_SCHEMA: str ="sales_agent"
 
-    GEMINI_API_KEY: SecretStr = SecretStr("AIzaSyDb_PJ8aKTCFvhyUPsZnI28p0W5WUX614Y")
+    GEMINI_API_KEY: SecretStr = SecretStr("")
     GEMINI_MODEL: str = "gemini-3.5-flash-lite"
 
     @property
