@@ -21,11 +21,11 @@ class GeminiProvider:
         ]
 
         try:
-            response = await self.client.aio.generate_content(
+            response = await self.client.aio.models.generate_content(
                 model=self.model,
                 contents=contents,
                 config=types.GenerateContentConfig(system_instruction=system)
             )
         except errors.APIError as exc:
             raise LLMUnavailableError(str(exc)) from exc
-        return response or ""
+        return response.text or ""
