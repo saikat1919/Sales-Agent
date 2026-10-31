@@ -1,8 +1,14 @@
 from fastapi import APIRouter
+from sqlalchemy.util import await_
+
 from app.integrations.llm.base import ChatMessage
 from app.integrations.llm.dependencies import LLMDep
+from app.modules.chat.dependencies import ChatServiceDep
 from app.modules.chat.prompts import SYSTEM_PROMPT
-from app.modules.chat.schemas import ChatResponse, ChatRequest, ConversationRequest
+from app.modules.chat.schemas import (ChatResponse,
+                                      ChatRequest,
+                                      ConversationRequest,
+                                      AssistantResponse)
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -39,3 +45,7 @@ async def turn_call(data: ConversationRequest, llm: LLMDep) -> ChatResponse:
     messages = [*data.history, ChatMessage(role="user", content=data.content)]
     reply = await llm.chat(system=SYSTEM_PROMPT, messages=messages)
     return ChatResponse(reply=reply)
+
+@router.post("", response_model=AssistantResponse)
+async def chat(data: ConversationRequest, service: ChatServiceDep) -> AssistantResponse:
+    return await service.reply(data)
