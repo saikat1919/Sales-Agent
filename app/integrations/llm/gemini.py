@@ -7,7 +7,7 @@ from app.core.exceptions.errors import LLMUnavailableError
 
 ROLES = {
     "user": "user",
-    "assistant": "assistant"
+    "assistant": "model"
 }
 
 MAX_TOOL_ROUNDS = 5
@@ -107,10 +107,10 @@ class GeminiProvider:
                 )
                 contents.append(types.Content(role="user", parts=results))
 
-            return LLMReply(
-                text="Sorry, I couldn't finish that. Please ask in a simpler way.",
-                tool_calls=tool_calls,
-            )
+        return LLMReply(
+            text="Sorry, I couldn't finish that. Please ask in a simpler way.",
+            tool_calls=tool_calls,
+        )
 
 
 

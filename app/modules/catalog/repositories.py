@@ -1,5 +1,4 @@
-from sqlalchemy import select, Select, func
-from sqlalchemy.sql.expression import or_
+from sqlalchemy import select, Select, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.catalog.models import Product
 from app.modules.catalog.schemas import SortOption, ProductFilters
@@ -42,9 +41,10 @@ class ProductRepository:
         if f.q:
             pattern = f'%{f.q}%'
             stmt = stmt.where(
-                or_(initial_clause=Product.name.ilike(pattern)),
+                or_(Product.name.ilike(pattern),
                 Product.description.ilike(pattern),
                 Product.brand.ilike(pattern)
+                )
             )
 
         if f.category:
