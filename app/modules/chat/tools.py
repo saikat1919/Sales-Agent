@@ -4,6 +4,8 @@ from app.core.exceptions.errors import NotFoundError
 from app.integrations.llm.base import ToolSpec
 from app.modules.catalog.schemas import ProductFilters, ProductRead
 from app.modules.catalog.services import ProductService
+from app.modules.knowledge.schemas import SearchMode, Source
+from app.modules.knowledge.services import KnowledgeService
 
 SEARCH_PRODUCTS = ToolSpec(
     name="search_products",
@@ -31,6 +33,26 @@ SEARCH_PRODUCTS = ToolSpec(
     }
 )
 
+SEARCH_POLICIES = ToolSpec(
+    name="search_policies",
+    description=(
+        "Search Kinbo's store policies: payment, cash on delivery, EMI, delivery, "
+        "order status, cancelling, returns, refunds, warranty, support and more. "
+        "Returns the 3 most relevant policy sections."
+    ),
+    parameters={
+        "type": "object",
+        "properties": {
+            "query": {
+                "type": "string",
+                "description": "What to look for, as a short question in English, "
+                "e.g. 'can I return an opened phone'.",
+            },
+        },
+        "required": ["query"],
+    },
+)
+
 GET_PRODUCT_DETAILS = ToolSpec(
     name="get_product_details",
     description=(
@@ -44,7 +66,7 @@ GET_PRODUCT_DETAILS = ToolSpec(
     }
 )
 
-TOOLS = [SEARCH_PRODUCTS, GET_PRODUCT_DETAILS]
+TOOLS = [SEARCH_PRODUCTS, GET_PRODUCT_DETAILS, SEARCH_POLICIES]
 
 def summary(p: ProductRead) -> dict[str, Any]:
     return {
@@ -55,9 +77,14 @@ def summary(p: ProductRead) -> dict[str, Any]:
     }
 
 async def execute_tool(
-        products: ProductService, name: str, args: dict[str, Any]
+        products: ProductService, knowledge: KnowledgeService, name: str, args: dict[str, Any]
 ) -> dict[str, Any]:
     try:
+        if name == "search_policies":
+            hits = await knowledge.search(
+                args["query"], SearchMode.HYBRID, Source.POLICY, limit=3
+            )
+            return {"sections": [{"title": h.title, "text": h.content} for h in hits]}
         if name == "search_products":
             filters = ProductFilters(
                 q=args.get("query") or None,

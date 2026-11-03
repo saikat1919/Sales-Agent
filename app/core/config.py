@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: SecretStr
     GEMINI_MODEL: str = "gemini-3.5-flash-lite"
 
+    EMBEDDINGS_URL: str
+
     @property
     def DATABASE_URL(self) -> URL:
         return URL.create(

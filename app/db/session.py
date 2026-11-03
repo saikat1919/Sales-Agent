@@ -10,7 +10,7 @@ engine: AsyncEngine = create_async_engine(
     pool_size=5,
     max_overflow=10,
     pool_pre_ping=True,
-    connect_args={"server_settings": {"search_path": settings.DB_SCHEMA}}
+    connect_args={"server_settings": {"search_path": f"{settings.DB_SCHEMA}, public"}}
 )
 
 SessionLocal: async_sessionmaker[AsyncSession] = async_sessionmaker(
