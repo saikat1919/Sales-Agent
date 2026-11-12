@@ -13,5 +13,12 @@ class ConflictError(AppError):
 
 class LLMUnavailableError(AppError):
     """Raised when LLM is not available"""
-    def __init__(self,resource: str, key: str):
-        ...
+    # def __init__(self,resource: str, key: str):
+    #     ...
+
+class UnauthorizedError(AppError):
+    """Raised when the caller is not logged in, or the token is bad."""
+    # def __init__(self,resource: str, key: str):
+
+class ForbiddenError(AppError):
+    """Raised when the caller is logged in but not allowed to do this."""
