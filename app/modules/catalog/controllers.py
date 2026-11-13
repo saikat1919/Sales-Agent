@@ -22,10 +22,10 @@ async def get_product(slug: str, service: ProductServiceDep) -> ProductRead:
 async def create_product(data: ProductCreate, service: ProductServiceDep) -> ProductRead:
     return await service.create_product(data)
 
-@router.patch(path="/{slug}", response_model=ProductRead)
+@router.patch(path="/{slug}", response_model=ProductRead, dependencies=[Depends(require_admin)])
 async def update_product(slug: str, data: ProductUpdate, service: ProductServiceDep) -> ProductRead:
     return await service.update_product(slug, data)
 
-@router.delete(path="/{slug}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(path="/{slug}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_admin)])
 async def archive_product(slug: str, service: ProductServiceDep) -> None:
     await service.archive_product(slug)
